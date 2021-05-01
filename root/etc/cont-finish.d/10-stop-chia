@@ -1,0 +1,8 @@
+#!/usr/bin/with-contenv bash
+
+cd /chia
+. ./activate
+
+echo "*** stopping chia"
+chia stop all -d
+echo "*** chia stopped"

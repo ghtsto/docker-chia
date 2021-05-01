@@ -1,0 +1,12 @@
+#!/usr/bin/with-contenv bash
+
+cd /chia
+. ./activate
+
+if pgrep -x "chia_harvester" >/dev/null; then
+    echo "*** chia_harvester is already running"
+else
+    echo "*** starting chia_harvester"
+    exec s6-setuidgid root chia start harvester
+    echo "*** chia_harvester started"
+fi

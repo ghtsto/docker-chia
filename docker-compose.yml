@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  harvester:
+    container_name: harvester
+    # image: ghtsto/chia:latest
+    build:
+      context: .
+    volumes:
+      - harvester-config:/config
+      - ./ca:/remote-ca:ro
+      - /ext-store4:/plots/store4:ro
+      - /ext-store5:/plots/store5:ro
+      - /ext-store6:/plots/store6:ro
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Vancouver
+      - CHIA_ROOT_DIR=--root-path /config/mainnet
+      - REMOTE_HARVESTER=true
+      - REMOTE_FARMER_IP=${REMOTE_FARMER_IP}
+      - REMOTE_FARMER_PORT=8447
+
+networks:
+  default:
+    external:
+      name: chia
+
+volumes:
+  harvester-config:

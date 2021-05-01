@@ -1,0 +1,24 @@
+#!/usr/bin/with-contenv bash
+
+echo "*** activate and initialize chia"
+cd /chia
+. ./activate
+chia init
+
+echo "*** checking if this is a remote harvester"
+if [ -d "/remote-ca" ] && [ $REMOTE_HARVESTER == 'true' ]; then
+    chia init -c /remote-ca
+    sed -i 's/localhost/127.0.0.1/g' /root/.chia/mainnet/config/config.yaml
+    chia configure --set-farmer-peer ${REMOTE_FARMER_IP}:${REMOTE_FARMER_PORT}
+fi
+
+if [ ! $(ls -d /plots/* 2> /dev/null | wc -l) -eq 0 ]; then
+    for dir in /plots/*/; do 
+        chia plots add -d $dir
+    done
+else
+    echo "*** no plots configured"
+fi
+
+# display version
+echo "*** chia version $(chia version) ready!"
