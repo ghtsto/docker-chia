@@ -1,0 +1,3 @@
+#!/usr/bin/with-contenv bash
+
+tail $([[ $1 == "-f" ]] || [[ $1 == "-F" ]] || [[ $1 == "--follow" ]] && printf "%s\n" "-F") /root/.chia/mainnet/log/debug.log

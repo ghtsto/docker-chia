@@ -1,23 +1,27 @@
 version: '3.7'
 
 services:
-  harvester:
-    container_name: harvester
-    # image: ghtsto/chia:latest
-    build:
-      context: .
+  chia:
+    container_name: chia
+    image: ghtsto/chia:latest
+    ports:
+      - "8444:8444"
     volumes:
-      - harvester-config:/config
+      - config:/root/.chia/
+      - blockchain:/root/.chia/mainnet/db/
+      - keychain:/root/.local/share/python_keyring/
+      - wallet:/root/.chia/mainnet/wallet/db/
       - ./ca:/remote-ca:ro
-      - /ext-store4:/plots/store4:ro
-      - /ext-store5:/plots/store5:ro
-      - /ext-store6:/plots/store6:ro
+      - ./plots:/plots/store1
+      # - ./seed.key:/seed.key
     environment:
-      - PUID=1000
-      - PGID=1000
       - TZ=America/Vancouver
-      - CHIA_ROOT_DIR=--root-path /config/mainnet
-      - REMOTE_HARVESTER=true
+      - FULL_NODE=true
+      - FARMER=true
+      - HARVESTER=true
+      - WALLET=true
+      - LOG_LEVEL=INFO
+      - REMOTE_HARVESTER=false
       - REMOTE_FARMER_IP=${REMOTE_FARMER_IP}
       - REMOTE_FARMER_PORT=8447
 
@@ -27,4 +31,7 @@ networks:
       name: chia
 
 volumes:
-  harvester-config:
+  config:
+  blockchain:
+  keychain:
+  wallet:

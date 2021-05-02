@@ -1,24 +1,50 @@
 #!/usr/bin/with-contenv bash
 
-echo "*** activate and initialize chia"
+echo "*** ACTIVATE AND INITIALIZE CHIA ***"
 cd /chia
 . ./activate
 chia init
 
-echo "*** checking if this is a remote harvester"
-if [ -d "/remote-ca" ] && [ $REMOTE_HARVESTER == 'true' ]; then
+if chia keys show | grep -q 'There are no saved private keys'; then
+    if [[ "$WALLET" == true ]] || [[ "$FARMER" == true ]]; then
+        if [[ -f "/seed.key" ]]; then
+            echo "*** GENERATING KEYS FROM SEED FILE ***"
+            chia keys add -f /seed.key
+        else
+            echo "*** GENERATING NEW KEYS ***"
+            chia keys generate
+        fi
+    fi
+else
+    echo "*** USING EXISTING KEYS ***"
+fi
+
+if [ -d "/remote-ca" ] && [ "$REMOTE_HARVESTER" == "true" ]; then
+    echo "*** CONFIGURING REMOTE HARVESTER ***"
+    cp -a /root/.chia/mainnet/config/ssl/ca /root/.chia/mainnet/config/ssl/ca-container
     chia init -c /remote-ca
-    sed -i 's/localhost/127.0.0.1/g' /root/.chia/mainnet/config/config.yaml
     chia configure --set-farmer-peer ${REMOTE_FARMER_IP}:${REMOTE_FARMER_PORT}
+elif [ -d "/root/.chia/mainnet/config/ssl/ca-container" ]; then
+    echo "*** CONFIGURING CERTS USING ORIGINAL CONTAINER CA ***"
+    chia init -c /root/.chia/mainnet/config/ssl/ca-container
+    chia configure --set-farmer-peer 127.0.0.1:8447
+    rm -rf /root/.chia/mainnet/config/ssl/ca-container
 fi
 
 if [ ! $(ls -d /plots/* 2> /dev/null | wc -l) -eq 0 ]; then
+    echo "*** ADDED PLOT DIRECTORIES TO CONFIG ***"
     for dir in /plots/*/; do 
         chia plots add -d $dir
     done
 else
-    echo "*** no plots configured"
+    echo "*** NO PLOTS CONFIGURED ***"
 fi
 
-# display version
-echo "*** chia version $(chia version) ready!"
+if [[ ! -z "${LOG_LEVEL}" ]]; then
+    echo "*** SETTING CHIA LOG LEVEL TO ${LOG_LEVEL} ***"
+    sed -i 's/log_level: .*/log_level: ${LOG_LEVEL}/g' /root/.chia/mainnet/config/config.yaml
+fi
+
+sed -i 's/localhost/127.0.0.1/g' /root/.chia/mainnet/config/config.yaml
+
+echo "*** CHIA VERSION $(chia version) READY ***"

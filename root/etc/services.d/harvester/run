@@ -1,0 +1,8 @@
+#!/usr/bin/with-contenv bash
+
+if [ "$HARVESTER" == "true" ] && ! pgrep -x "chia_harvester" >/dev/null; then
+    cd /chia
+    . ./activate
+    echo "*** STARTING chia_harvester"
+    chia start harvester
+fi

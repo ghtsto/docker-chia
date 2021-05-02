@@ -3,4 +3,4 @@
 cd /chia
 . ./activate
 
-chia $1
+chia $@

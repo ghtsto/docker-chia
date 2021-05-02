@@ -1,0 +1,15 @@
+#!/usr/bin/with-contenv bash
+
+if [ "$WALLET" == "true" ] && ! pgrep -x "chia_wallet" >/dev/null; then
+    cd /chia
+    . ./activate
+    echo "*** STARTING chia_wallet"
+    chia start wallet-only
+
+    sleep 10s
+    if ! timeout 5s chia wallet show | grep -q "xch" && [[ "$WALLET" = true ]]; then
+        echo "*** GENERATING WALLET ***"
+        yes "s" 2>/dev/null | chia wallet show
+        echo "*** WALLET GENERATED ***"
+    fi
+fi

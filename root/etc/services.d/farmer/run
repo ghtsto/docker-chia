@@ -1,0 +1,8 @@
+#!/usr/bin/with-contenv bash
+
+if [[ "$FARMER" = true ]] && ! pgrep -x "chia_farmer" >/dev/null; then
+    cd /chia
+    . ./activate
+    echo "*** STARTING chia_farmer ***"
+    chia start farmer-only
+fi

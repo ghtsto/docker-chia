@@ -3,6 +3,6 @@
 cd /chia
 . ./activate
 
-echo "*** stopping chia"
+echo "*** STOPPING CHIA ***"
 chia stop all -d
-echo "*** chia stopped"
+echo "*** CHIA STOPPED ***"
