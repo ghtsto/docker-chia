@@ -11,9 +11,9 @@ services:
       - blockchain:/root/.chia/mainnet/db/
       - keychain:/root/.local/share/python_keyring/
       - wallet:/root/.chia/mainnet/wallet/db/
-      - ./ca:/remote-ca:ro
-      - ./plots:/plots/store1
-      # - ./seed.key:/seed.key
+      # - ./ca:/remote-ca:ro
+      # - ./plots:/plots/store1:ro
+      # - ./seed.key:/seed.key:ro
     environment:
       - TZ=America/Vancouver
       - FULL_NODE=true
