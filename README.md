@@ -44,7 +44,7 @@ volumes:
   wallet:
 ```
 ## Volumes, mounts and environment variables
-Copy and rename .env.example to .env and update ```COMPOSE_PROJECT_NAME``` (default: chia). If you plan on using this as a remote harvester, update the ```REMOTE_FARMER_IP```.
+Copy and rename `.env.example` to `.env` and update ```COMPOSE_PROJECT_NAME``` (default: chia). If you plan on using this as a remote harvester, update the ```REMOTE_FARMER_IP```.
 
 ### Volumes
 The idea behind structuring the volumes in this way is that the config data can easily be preserved between container destruction and give some flexibility when wanting to delete/recreate volumes.
