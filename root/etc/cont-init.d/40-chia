@@ -19,6 +19,21 @@ else
     echo "*** USING EXISTING KEYS ***"
 fi
 
+if [ $(ls -d /root/.chia/mainnet/db/blockchain_v1_mainnet.sqlite 2> /dev/null | wc -l) -eq 1 ]; then
+    if [ "$UPGRADE_DB_V2" == "true" ]; then
+        echo "*** UPGRADING DATABASE TO V2 ***"
+        chia db upgrade
+    else
+        echo "*** DATABASE IS V1 ***"
+    fi
+    if [ "$KEEP_V1_DB" == "false" ]; then
+        echo "*** CLEANING OLD DB FILE ***"
+        rm /root/.chia/mainnet/db/blockchain_v1_mainnet.sqlite
+    fi
+else
+    echo "*** DATABASE IS V2 ***"
+fi
+
 if [ -d "/remote-ca" ] && [ "$REMOTE_HARVESTER" == "true" ]; then
     echo "*** CONFIGURING REMOTE HARVESTER ***"
     cp -a /root/.chia/mainnet/config/ssl/ca /root/.chia/mainnet/config/ssl/ca-container
@@ -30,6 +45,14 @@ elif [ -d "/root/.chia/mainnet/config/ssl/ca-container" ]; then
     chia configure --set-farmer-peer 127.0.0.1:8447
     rm -rf /root/.chia/mainnet/config/ssl/ca-container
 fi
+
+for i in $(find /root/.chia/mainnet/config/ssl/ -type f \( -name "*.key" ! -iname "*public_introducer.key" \) -printf %m -exec echo '{}' \; | cut -c 1-3); do
+  if ! [ "$i" -eq 600 ]; then
+    echo "*** FIXING SSL PERMISSIONS ***"
+    chia init --fix-ssl-permissions
+    break
+  fi
+done
 
 if [ ! $(ls -d /plots/* 2> /dev/null | wc -l) -eq 0 ]; then
     echo "*** ADDED PLOT DIRECTORIES TO CONFIG ***"

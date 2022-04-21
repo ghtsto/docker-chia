@@ -5,7 +5,7 @@ ARG DEBIAN_FRONTEND="noninteractive"
 ARG APT_MIRROR="archive.ubuntu.com"
 ARG PLATFORM_ARCH="amd64"
 
-ARG CHIA_VERSION="1.1.5"
+ARG CHIA_VERSION="1.3.3"
 
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2
 ENV S6_KEEP_ENV=1
@@ -30,7 +30,9 @@ RUN \
     update-ca-certificates && \
     apt install -y openssl && \
   echo "*** install s6 overlay ***" && \
-    S6_OVERLAY_VERSION=$(curl -sX GET "https://api.github.com/repos/just-containers/s6-overlay/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]') && \
+    # revert whenever this image gets updated to use s6 v3
+    # S6_OVERLAY_VERSION=$(curl -sX GET "https://api.github.com/repos/just-containers/s6-overlay/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]') && \
+    S6_OVERLAY_VERSION=v2.2.0.3 && \
     curl -J -L -o /tmp/s6-overlay-amd64.tar.gz https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/s6-overlay-amd64.tar.gz && \
     tar xzf /tmp/s6-overlay-amd64.tar.gz -C / --exclude='./bin' && \
     tar xzf /tmp/s6-overlay-amd64.tar.gz -C /usr ./bin && \
