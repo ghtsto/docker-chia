@@ -56,8 +56,6 @@ RUN \
     apt-get autoremove -y && \
     rm -rf /tmp/* /var/lib/{apt,dpkg,cache,log}/
 
-VOLUME /config /blockchain /keyring /wallet
-
 COPY root/ /
 
 ENTRYPOINT ["/init"]

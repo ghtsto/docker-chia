@@ -9,7 +9,7 @@ services:
     volumes:
       - config:/root/.chia/
       - blockchain:/root/.chia/mainnet/db/
-      - keychain:/root/.local/share/python_keyring/
+      - keychain:/root/.chia_keys/
       - wallet:/root/.chia/mainnet/wallet/db/
       # - ./ca:/remote-ca:ro
       # - ./plots:/plots/store1:ro
@@ -24,6 +24,8 @@ services:
       - REMOTE_HARVESTER=false
       - REMOTE_FARMER_IP=${REMOTE_FARMER_IP}
       - REMOTE_FARMER_PORT=8447
+      - UPGRADE_DB_V2=true
+      - KEEP_V1_DB=false
 
 networks:
   default:
