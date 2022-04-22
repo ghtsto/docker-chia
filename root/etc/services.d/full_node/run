@@ -3,6 +3,6 @@
 if [ "$FULL_NODE" == "true" ] && ! pgrep -x "chia_full_node" >/dev/null; then
     cd /chia
     . ./activate
-    echo "*** STARTING chia_full_node"
+    echo "*** STARTING chia_full_node ***"
     chia start node
 fi

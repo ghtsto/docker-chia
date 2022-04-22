@@ -3,8 +3,8 @@
 if [ "$WALLET" == "true" ] && ! pgrep -x "chia_wallet" >/dev/null; then
     cd /chia
     . ./activate
-    echo "*** STARTING chia_wallet"
-    chia start wallet-only
+    echo "*** STARTING chia_wallet ***"
+    chia start wallet
 
     sleep 10s
     if ! timeout 5s chia wallet show | grep -q "xch" && [[ "$WALLET" = true ]]; then
